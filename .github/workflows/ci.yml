@@ -12,6 +12,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       -
+        name: Set short SHA
+        id: vars
+        run: echo "short_sha=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_OUTPUT
+      -
         name: Login to Docker Hub
         uses: docker/login-action@v3
         with:
@@ -22,4 +26,4 @@ jobs:
         uses: docker/build-push-action@v6
         with:
           push: true
-          tags: dmartin1642712/python-app-learning:${{ github.sha }}
+          tags: dmartin1642712/python-app-learning:${{ steps.vars.outputs.short_sha }}
