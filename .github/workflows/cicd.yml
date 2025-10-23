@@ -24,16 +24,33 @@ jobs:
         with:
           push: true
           tags: dmartin1642712/python-app-learning:${{ steps.vars.outputs.short_sha }}
+    outputs:
+      short_sha: ${{ steps.vars.outputs.short_sha }}
 
   cd:
     needs: ci
     runs-on: self-hosted
     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Modify values.yaml file
+        run: |
+          echo ${{ needs.ci.outputs.short_sha }}
+          pip install yq
+          yq -Yi '.image.tag = "${{ needs.ci.outputs.short_sha }}"' charts/python-app/values.yaml
+
+      - name: Commit changes
+        uses: EndBug/add-and-commit@v9
+        with:
+          message: 'Update values.yaml with commit ${{ needs.ci.outputs.short_sha }}'
+
       - name: Install ArgoCD CLI
         run: |
           curl -ksSL -o argocd https://argocd-server.argocd/download/argocd-linux-arm64
           chmod +x argocd
           sudo mv ./argocd /usr/local/bin/argocd
+
       - name: ArgoCD app sync
         run: |
           argocd login argocd-server.argocd \
