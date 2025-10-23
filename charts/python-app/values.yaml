@@ -2,7 +2,7 @@ replicaCount: 1
 image:
   repository: dmartin1642712/python-app-learning
   pullPolicy: IfNotPresent
-  tag: 23c2880
+  tag: 7d8efa6
 imagePullSecrets: []
 nameOverride: ""
 fullnameOverride: ""
